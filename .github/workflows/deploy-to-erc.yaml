@@ -40,7 +40,7 @@ jobs:
           ecr_repository_name=flask-app
           image_tag=${{ github.sha }}
 
-          docker build -t $aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag .
+          docker build -t $aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag app/
           echo "IMAGE_URI=$aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag" >> $GITHUB_ENV
 
       # Push the Docker image to ECR
