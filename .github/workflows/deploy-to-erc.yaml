@@ -66,19 +66,19 @@ jobs:
           echo "Image URI: $IMAGE_URI"
 
       # Deploy to EC2
-- name: Deploy to EC2
-  uses: appleboy/ssh-action@v0.1.7
-  with:
-    host: ${{ secrets.EC2_PUBLIC_IP }}
-    username: ec2-user
-    key: ${{ secrets.EC2_SSH_KEY }}
-    port: 22
-    script: |
-      aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}
-      aws_region=${{ secrets.AWS_REGION }}
-      ecr_url="$aws_account_id.dkr.ecr.$aws_region.amazonaws.com"
-      docker login --username AWS --password "${{ secrets.ECR_PASSWORD }}" $ecr_url
-      docker pull $ecr_url/flask-app:ce545708a46174451d9a0e066ddb92e5e86b6145
-      docker stop flask-container || true
-      docker rm flask-container || true
-      docker run -d --name flask-container -p 5000:5000 $ecr_url/flask-app:ce545708a46174451d9a0e066ddb92e5e86b6145
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}
+            aws_region=${{ secrets.AWS_REGION }}
+            ecr_url="$aws_account_id.dkr.ecr.$aws_region.amazonaws.com"
+            docker login --username AWS --password "${{ secrets.ECR_PASSWORD }}" $ecr_url
+            docker pull $ecr_url/flask-app:ce545708a46174451d9a0e066ddb92e5e86b6145
+            docker stop flask-container || true
+            docker rm flask-container || true
+            docker run -d --name flask-container -p 5000:5000 $ecr_url/flask-app:ce545708a46174451d9a0e066ddb92e5e86b6145
