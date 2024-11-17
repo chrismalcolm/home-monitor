@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Confirm Deletion</h1>
+    <p>Are you sure you want to delete the following task?</p>
+    <table border="1">
+        <tr>
+            <th>Task Name</th>
+            <th>Duration (Days)</th>
+        </tr>
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.interval }}</td>
+        </tr>
+    </table>
+    <br>
+    <form method="POST" action="/task_delete_confirmation">
+        <input type="hidden" name="id" value="{{ task.id }}">
+        <button type="submit">Yes, Delete</button>
+    </form>
+    <br>
+    <a href="/tasks">Back to Tasks</a>
+</body>
+</html>

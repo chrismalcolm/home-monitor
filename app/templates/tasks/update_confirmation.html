@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Updated</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Task Updated Successfully</h1>
+    <p>The task has been updated with the following details:</p> 
+    <table border="1">
+        <tr>
+            <th>Old Task Name</th>
+            <th>Old Duration (Days)</th>
+        </tr>
+        <tr>
+            <td>{{ old_name }}</td>
+            <td>{{ old_interval }}</td>
+        </tr>
+    </table>
+    <br>
+    <table border="1">
+        <tr>
+            <th>New Task Name</th>
+            <th>New Duration (Days)</th>
+        </tr>
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.interval }}</td>
+        </tr>
+    </table>
+    <br>
+    <a href="/tasks">Back to Tasks</a>
+</body>
+</html>

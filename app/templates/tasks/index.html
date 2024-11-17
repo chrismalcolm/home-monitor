@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Tasks</h1>
+    <table border="1">
+        <tr>
+            <th>Task Name</th>
+            <th>Duration (Days)</th>
+            <th>Actions</th>
+        </tr>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.interval }}</td>
+            <td>
+                <a href="/task_update?id={{ task.id }}">Edit</a> /
+                <a href="/task_delete?id={{ task.id }}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="/task_create"><button>Create New Task</button></a>
+    <br><br>
+    <a href="/">Back to Overview</a>
+</body>
+</html>

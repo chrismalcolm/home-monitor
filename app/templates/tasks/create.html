@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Task</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Create a New Task</h1>
+    <form method="POST" action="/task_create_confirmation">
+        <label for="name">Task Name:</label><br>
+        <input type="text" id="name" name="name" placeholder="Enter task name" required><br><br>
+        <label for="interval">Duration:</label><br>
+        <input type="number" id="interval" name="interval" placeholder="Enter duration in days" required><br><br>
+        <button type="submit">Create Task</button>
+    </form>
+    <br>
+    <a href="/tasks">Back to Tasks</a>
+</body>
+</html>

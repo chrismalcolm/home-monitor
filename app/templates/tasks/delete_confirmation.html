@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Deleted</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Task Deleted</h1>
+    <p>The following task has been successfully deleted:</p>
+    <table border="1">
+        <tr>
+            <th>Task Name</th>
+            <th>Duration (Days)</th>
+        </tr>
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.interval }}</td>
+        </tr>
+    </table>
+    <br>
+    <a href="/tasks">Back to Tasks</a>
+</body>
+</html>

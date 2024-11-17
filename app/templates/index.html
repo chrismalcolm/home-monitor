@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Monitor Overview</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Records</h1>
+    <table border="1">
+        <tr>
+            <th>Task Name</th>
+            <th>Last Completed</th>
+            <th>Next Due Date</th>
+            <th>Actions</th>
+        </tr>
+        {% for entry in records %}
+        <tr>
+            <td>{{ entry.task.name }}</td>
+            <td>
+                {% if entry.record %}
+                    {{ entry.record.timestamp }}
+                {% else %}
+                    <i>No completion yet</i>
+                {% endif %}
+            </td>
+            <td>
+                {% if entry.record %}
+                    {{ entry.next_due_date }}
+                {% else %}
+                    <i>Not available</i>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/complete?id={{ entry.task.id }}">Complete</a> /
+                <a href="/enter_date?id={{ entry.task.id }}">Enter Date</a> /
+                <a href="/history?id={{ entry.task.id }}">View History</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <br>
+    <a href="/tasks">View Tasks</a>
+</body>
+</html>

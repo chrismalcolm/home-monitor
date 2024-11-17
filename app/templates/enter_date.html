@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Completion Date</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Enter Completion Date for Task: {{ task.name }}</h1>
+    <form method="POST" action="/enter_date?id={{ task.id }}">
+        <label for="completion_date">Completion Date:</label><br>
+        <input type="datetime-local" id="completion_date" name="completion_date" required><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <br>
+    <a href="/">Back to Overview</a>
+</body>
+</html>
