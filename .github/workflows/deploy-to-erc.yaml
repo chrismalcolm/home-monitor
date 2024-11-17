@@ -1,0 +1,50 @@
+name: Deploy to Amazon ECR
+
+on:
+  push:
+    branches:
+      - main # Trigger this workflow on push to the main branch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Log in to Amazon ECR
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Set up Docker buildx (optional but recommended for better compatibility)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build and tag the Docker image with Flask environment variables
+      - name: Build Docker image with environment variables
+        run: |
+          aws_account_id=$(aws sts get-caller-identity --query Account --output text)
+          ecr_repository_name=flask-app
+          image_tag=${{ github.sha }}
+
+          docker build \
+            --build-arg FLASK_ENV=production \
+            --build-arg API_KEY=${{ secrets.API_KEY }} \
+            -t $aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag .
+
+          echo "IMAGE_URI=$aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag" >> $GITHUB_ENV
+
+      # Push the Docker image to ECR
+      - name: Push Docker image to ECR
+        run: |
+          aws_account_id=$(aws sts get-caller-identity --query Account --output text)
+          ecr_repository_name=flask-app
+
+          docker push $aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:${{ github.sha }}
+
+      # Output the image URI
+      - name: Output Image URI
+        run: echo "Image URI: $IMAGE_URI"
