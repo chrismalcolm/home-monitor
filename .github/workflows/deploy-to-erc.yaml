@@ -19,7 +19,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
         with:
-          region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       # Set up Docker buildx (optional but recommended for better compatibility)
       - name: Set up Docker Buildx
