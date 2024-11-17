@@ -29,7 +29,16 @@ jobs:
         with:
           region: ${{ secrets.AWS_REGION }}
 
-      # Set up Docker buildx (optional but recommended for better compatibility)
+      # Ensure ECR repository exists
+      - name: Create ECR repository if not exists
+        run: |
+          aws_account_id=$(aws sts get-caller-identity --query Account --output text)
+          ecr_repository_name=flask-app
+
+          aws ecr describe-repositories --repository-names $ecr_repository_name || \
+          aws ecr create-repository --repository-name $ecr_repository_name
+
+      # Set up Docker buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
