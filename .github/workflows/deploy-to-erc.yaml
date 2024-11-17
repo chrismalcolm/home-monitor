@@ -47,4 +47,5 @@ jobs:
 
       # Output the image URI
       - name: Output Image URI
-        run: echo "Image URI: $IMAGE_URI"
+        run: |
+          echo "Image URI: $IMAGE_URI"
