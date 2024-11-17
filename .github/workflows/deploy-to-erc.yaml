@@ -3,7 +3,7 @@ name: Deploy to Amazon ECR
 on:
   push:
     branches:
-      - main # Trigger this workflow on push to the main branch
+      - main
 
 jobs:
   build-and-push:
@@ -87,9 +87,3 @@ jobs:
             -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
             -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
             $ecr_url/flask-app:ce545708a46174451d9a0e066ddb92e5e86b6145 flask run --host=0.0.0.0 --port=5000
-
-            # Echo PostgreSQL environment variables
-            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}"
-            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}"
-            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}"
-            echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}"

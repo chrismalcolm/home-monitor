@@ -31,6 +31,13 @@ resource "aws_security_group" "postgres_exporter_sg" {
   vpc_id = module.vpc.vpc_id
 
   ingress {
+    from_port   = 22 # SSH
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port   = 9187 # PostgreSQL Exporter
     to_port     = 9187
     protocol    = "tcp"
@@ -96,21 +103,22 @@ resource "aws_instance" "prometheus" {
           sudo service docker start
           sudo usermod -a -G docker ec2-user
 
-          # Create Prometheus configuration using echo
-          echo "global:" > /home/ec2-user/prometheus.yml
-          echo "  scrape_interval: 15s" >> /home/ec2-user/prometheus.yml
-          echo "scrape_configs:" >> /home/ec2-user/prometheus.yml
-          echo "  - job_name: 'postgres-exporter'" >> /home/ec2-user/prometheus.yml
-          echo "    static_configs:" >> /home/ec2-user/prometheus.yml
-          echo "      - targets: ['${aws_instance.postgres_exporter.private_ip}:9187']" >> /home/ec2-user/prometheus.yml
+          # Create Prometheus configuration
+          cat <<EOF > /home/ec2-user/prometheus.yml
+          global:
+            scrape_interval: 10s
+          scrape_configs:
+            - job_name: "postgres-exporter"
+              static_configs:
+                - targets: ["${aws_instance.postgres_exporter.private_ip}:9187"]
+          EOF
 
-          # Run Prometheus only
+          # Run Prometheus
           docker run -d --name prometheus -p 9090:9090 \
           -v /home/ec2-user/prometheus.yml:/etc/prometheus/prometheus.yml:ro \
           prom/prometheus
         EOT
 
-  
   user_data_replace_on_change = true
 
   tags = {
