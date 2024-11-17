@@ -142,6 +142,7 @@ resource "aws_instance" "flask_app" {
   subnet_id     = module.vpc.public_subnets[0]
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
   associate_public_ip_address = true
+  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
 
   user_data = <<-EOT
               #!/bin/bash
@@ -151,33 +152,16 @@ resource "aws_instance" "flask_app" {
               sudo yum install -y docker
               sudo service docker start
               sudo usermod -a -G docker ec2-user
-
-              # Install AWS CLI to authenticate Docker with ECR
-              sudo yum install -y aws-cli
-
-              # Authenticate Docker to ECR
-              aws_account_id=$(aws sts get-caller-identity --query Account --output text --region eu-north-1)
-              aws ecr get-login-password --region eu-north-1 | sudo docker login --username AWS --password-stdin $aws_account_id.dkr.ecr.eu-north-1.amazonaws.com
-
-              # Pull the image from ECR
-              docker pull $aws_account_id.dkr.ecr.eu-north-1.amazonaws.com/flask-app:latest
-
-              # Stop and remove any old container
-              docker stop flask-container || true
-              docker rm flask-container || true
-
-              # Run the container
-              docker run -d --name flask-container -p 5000:5000 $aws_account_id.dkr.ecr.eu-north-1.amazonaws.com/flask-app:latest
             EOT
+}
+
+# Create Elastic IP
+resource "aws_eip" "flask_eip" {
+  instance = aws_instance.flask_app.id
 }
 
 # Key Pair for SSH
 resource "aws_key_pair" "flask_key" {
   key_name   = "flask-app-key"
   public_key = file("~/.ssh/id_rsa.pub")
-}
-
-# Outputs
-output "ec2_instance_public_ip" {
-  value = aws_instance.flask_app.public_ip
 }
