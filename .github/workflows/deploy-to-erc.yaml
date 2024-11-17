@@ -14,29 +14,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       # Log in to Amazon ECR
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
         with:
-          aws-region: ${{ secrets.AWS_REGION }}
+          region: ${{ secrets.AWS_REGION }}
 
       # Set up Docker buildx (optional but recommended for better compatibility)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Build and tag the Docker image with Flask environment variables
-      - name: Build Docker image with environment variables
+      # Build and tag the Docker image
+      - name: Build Docker image
         run: |
           aws_account_id=$(aws sts get-caller-identity --query Account --output text)
           ecr_repository_name=flask-app
           image_tag=${{ github.sha }}
 
-          docker build \
-            --build-arg FLASK_ENV=production \
-            --build-arg API_KEY=${{ secrets.API_KEY }} \
-            -t $aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag .
-
+          docker build -t $aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag .
           echo "IMAGE_URI=$aws_account_id.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ecr_repository_name:$image_tag" >> $GITHUB_ENV
 
       # Push the Docker image to ECR
